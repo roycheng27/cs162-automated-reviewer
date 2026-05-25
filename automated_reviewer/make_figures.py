@@ -26,11 +26,17 @@ from . import metrics  # noqa: E402
 
 # Models in weak -> strong order. Skipped automatically if a file is missing.
 MODELS = [
-    ("llama-3.1-8b", "results/reviews_meta-llama_llama-3.1-8b-instruct.json"),
-    ("llama-3.3-70b", "results/reviews_llama-3.3-70b.json"),
-    ("qwen-2.5-72b", "results/reviews_qwen_qwen-2.5-72b-instruct.json"),
-    ("deepseek-chat", "results/reviews_deepseek_deepseek-chat.json"),
-    ("deepseek-r1", "results/reviews_deepseek_deepseek-r1.json"),
+    ("llama-3.1-8b",     "results/reviews_meta-llama_llama-3.1-8b-instruct.json"),
+    ("llama-3.3-70b",    "results/reviews_llama-3.3-70b.json"),
+    ("qwen-2.5-72b",     "results/reviews_qwen_qwen-2.5-72b-instruct.json"),
+    ("gemini-2.0-flash", "results/reviews_google_gemini-2.0-flash.json"),
+    ("gpt-4o-mini",      "results/reviews_openai_gpt-4o-mini.json"),
+    ("deepseek-chat",    "results/reviews_deepseek_deepseek-chat.json"),
+    ("gpt-4o",           "results/reviews_openai_gpt-4o.json"),
+    ("deepseek-r1",      "results/reviews_deepseek_deepseek-r1.json"),
+    ("qwen3-235b*",       "results/reviews_qwen_qwen3-235b-thinking.json"),
+    ("claude-opus-4.7",   "results/reviews_anthropic_claude-opus-4.7.json"),
+    ("claude-sonnet-4.6", "results/reviews_anthropic_claude-sonnet-4.6.json"),
 ]
 
 FIG_DIR = "figures"

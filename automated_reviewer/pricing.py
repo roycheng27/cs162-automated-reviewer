@@ -18,7 +18,9 @@ PRICES: dict[str, tuple[float, float]] = {
     # --- Anthropic ---
     "claude-haiku-4-5": (1.00, 5.00),
     "claude-sonnet-4-6": (3.00, 15.00),
+    "claude-sonnet-4.6": (3.00, 15.00),
     "claude-opus-4-7": (5.00, 25.00),
+    "claude-opus-4.7": (5.00, 25.00),
     # --- OpenAI ---
     "gpt-4o-mini": (0.15, 0.60),
     "gpt-4o": (2.50, 10.00),
@@ -43,6 +45,9 @@ PRICES: dict[str, tuple[float, float]] = {
     "gemini-2.0-flash": (0.10, 0.40),
     "gemini-2.5-flash": (0.15, 0.60),
     "gemini-flash": (0.10, 0.40),
+    # --- OpenAI reasoning ---
+    "o1-mini": (1.10, 4.40),
+    "o3-mini": (1.10, 4.40),
 }
 
 
