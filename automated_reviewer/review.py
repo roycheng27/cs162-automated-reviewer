@@ -25,7 +25,7 @@ import json
 import os
 import sys
 
-from . import pricing, prompts
+from . import pricing, prompts, prompt_variants, fewshot
 from .providers import get_provider
 
 
@@ -101,7 +101,9 @@ def review_papers(papers_path: str, out_path: str, provider_name: str,
                    limit: int | None, thinking: bool, max_chars: int | None,
                    json_mode: bool | None, base_url: str | None,
                    budget: float | None, price_in: float | None,
-                   price_out: float | None) -> None:
+                   price_out: float | None, prompt_style: str = "default",
+                   fewshot_k: int = 0,
+                   fewshot_file: str = "data/fewshot_examples.json") -> None:
     with open(papers_path) as fh:
         papers = json.load(fh)
     if limit is not None:
@@ -111,6 +113,14 @@ def review_papers(papers_path: str, out_path: str, provider_name: str,
                             json_mode=json_mode, base_url=base_url)
     _log(f"Provider: {provider.name} / {provider.model} | "
          f"n_reviews={n_reviews} meta_review={meta_review}")
+
+    # Build the prompt spec: a format variant, optionally with few-shot
+    # demonstrations attached. Both stay per-paper-invariant (cacheable).
+    spec = prompt_variants.get_spec(prompt_style)
+    if fewshot_k and fewshot_k > 0:
+        examples = fewshot.load_examples(fewshot_file)
+        spec = fewshot.attach(spec, examples, k=fewshot_k)
+    _log(f"Prompt: style={prompt_style} few_shot={fewshot_k} -> spec={spec.name}")
     if budget is not None:
         _log(f"Budget: ${budget:.2f} (run stops if projected spend exceeds it)")
 
@@ -145,7 +155,7 @@ def review_papers(papers_path: str, out_path: str, provider_name: str,
         if max_chars and len(full_text) > max_chars:
             _log(f"  note: {pid} text {len(full_text)} chars -> truncated to {max_chars}")
             full_text = full_text[:max_chars]
-        user_prompt = prompts.build_user_prompt(
+        user_prompt = spec.build_user(
             paper["title"], paper["abstract"], full_text)
 
         reviews, errors = [], []
@@ -154,8 +164,7 @@ def review_papers(papers_path: str, out_path: str, provider_name: str,
 
         for _ in range(n_reviews):
             review, usage, err = _generate_review(
-                provider, prompts.REVIEWER_SYSTEM, prompts.REVIEW_GUIDELINES,
-                user_prompt)
+                provider, spec.system, spec.guidelines, user_prompt)
             for k in agg:
                 agg[k] += usage.get(k, 0)
             if review is None:
@@ -216,7 +225,7 @@ def main() -> None:
                     help="Output reviews JSON (default: results/reviews.json)")
     ap.add_argument("--provider", default="openrouter",
                     choices=["anthropic", "openai", "openrouter", "together",
-                             "groq", "deepinfra"],
+                             "groq", "deepinfra", "mock"],
                     help="LLM provider (default: openrouter)")
     ap.add_argument("--model", default=None,
                     help="Model id (default: a cheap model for the provider)")
@@ -236,6 +245,14 @@ def main() -> None:
                     default=None, help="Force OpenAI-style JSON mode on")
     ap.add_argument("--no-json-mode", dest="json_mode", action="store_false",
                     help="Force JSON mode off (rely on prompt + parser)")
+    ap.add_argument("--prompt-style", default="default",
+                    choices=list(prompt_variants.STYLES),
+                    help="Reviewer prompt format variant (default: default)")
+    ap.add_argument("--few-shot", dest="few_shot", type=int, default=0,
+                    help="Number of in-context exemplars to prepend (0=off)")
+    ap.add_argument("--few-shot-file", dest="few_shot_file",
+                    default="data/fewshot_examples.json",
+                    help="JSON file of exemplars (see fetch_examples.py)")
     ap.add_argument("--budget", type=float, default=4.0,
                     help="Stop before projected spend exceeds this USD amount "
                          "(default: 4.0; use 0 to disable)")
@@ -260,6 +277,9 @@ def main() -> None:
         budget=None if args.budget == 0 else args.budget,
         price_in=args.price_in,
         price_out=args.price_out,
+        prompt_style=args.prompt_style,
+        fewshot_k=args.few_shot,
+        fewshot_file=args.few_shot_file,
     )
 
 

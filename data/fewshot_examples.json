@@ -1,0 +1,60 @@
+[
+  {
+    "title": "Sparse Mixture Routing with Learned Temperature for Efficient Inference",
+    "abstract": "We introduce a learned-temperature gating mechanism for sparse mixture-of-experts layers that adapts routing sharpness per token. On three language-modeling benchmarks the method matches dense-model quality at 38% of the active FLOPs, and we provide ablations isolating the temperature schedule, expert count, and load-balancing loss. Code and training configs are released.",
+    "excerpt": "Section 4 reports results on WikiText-103, C4, and The Pile, each averaged over 3 seeds with 95% confidence intervals. Table 2 ablates the temperature schedule against a fixed-temperature baseline and a no-gating dense model matched for parameter count. Section 5 analyses routing entropy over training and shows the learned temperature anneals automatically. Appendix B gives full hyperparameters and the load-balancing coefficient sweep.",
+    "review": {
+      "summary": "The paper proposes a per-token learned-temperature gate for sparse mixture-of-experts layers and shows it preserves dense-model quality at substantially reduced active compute, with ablations isolating each component.",
+      "strengths": [
+        "Clear, well-motivated mechanism with a sensible adaptive-sharpness intuition.",
+        "Experiments span three datasets with multiple seeds and confidence intervals; the FLOP-matched dense baseline is a fair comparison.",
+        "Ablations isolate the temperature schedule, expert count, and load-balancing loss, supporting the central claim.",
+        "Code and configs released, aiding reproducibility."
+      ],
+      "weaknesses": [
+        "No comparison against recent learned-routing baselines beyond fixed-temperature gating.",
+        "Wall-clock latency, not just FLOPs, would strengthen the efficiency claim."
+      ],
+      "questions": [
+        "How sensitive is the method to the load-balancing coefficient outside the swept range?",
+        "Does the learned temperature transfer across model scales without retuning?"
+      ],
+      "limitations": "Limitations around scale and latency are acknowledged briefly; ethical concerns are minimal for this work and adequately noted.",
+      "soundness": 3,
+      "presentation": 3,
+      "contribution": 3,
+      "overall": 7,
+      "confidence": 4,
+      "decision": "Accept"
+    }
+  },
+  {
+    "title": "A Unified Framework for Graph Augmentation via Random Edge Perturbation",
+    "abstract": "We present a framework that improves graph neural network accuracy by randomly perturbing edges during training. Across several node-classification datasets our method increases accuracy. We argue this constitutes a general principle for graph augmentation.",
+    "excerpt": "Section 3 evaluates on Cora, Citeseer, and PubMed using a single train/test split and reports accuracy without standard deviations. The proposed method is compared only to a no-augmentation GCN baseline; DropEdge, GraphCL, and other standard augmentation baselines are mentioned in related work but not run. Section 4 claims generality but provides no theoretical analysis and no experiments on larger or heterophilous graphs. Hyperparameters are not reported.",
+    "review": {
+      "summary": "The paper proposes random edge perturbation as a graph-augmentation method and reports accuracy gains on three small citation benchmarks, claiming a general augmentation principle.",
+      "strengths": [
+        "The idea is simple and easy to implement.",
+        "The writing in the introduction is accessible."
+      ],
+      "weaknesses": [
+        "Evaluation uses a single split with no standard deviations, so reported gains may be within noise.",
+        "Directly related baselines (DropEdge, GraphCL) are discussed but never compared against empirically, despite being the obvious points of contrast.",
+        "The generality claim is unsupported: no theory and no experiments beyond three small homophilous citation graphs.",
+        "Hyperparameters and tuning protocol are not reported, harming reproducibility."
+      ],
+      "questions": [
+        "How does the method compare to DropEdge under an identical training budget and multiple seeds?",
+        "Do the gains persist on larger or heterophilous graphs?"
+      ],
+      "limitations": "Limitations are not meaningfully discussed; the generality claim is not scoped honestly to the narrow evaluation.",
+      "soundness": 2,
+      "presentation": 2,
+      "contribution": 1,
+      "overall": 4,
+      "confidence": 4,
+      "decision": "Reject"
+    }
+  }
+]

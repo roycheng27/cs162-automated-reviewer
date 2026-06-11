@@ -171,6 +171,46 @@ class OpenAICompatibleProvider(Provider):
         return text, usage
 
 
+
+class MockProvider(Provider):
+    """Offline provider: deterministic fake reviews, no network or API key.
+
+    For smoke-testing the pipeline (prompt assembly, parsing, evaluation,
+    aggregation) without spending money. The score is derived from a hash of
+    the user prompt so output is stable and varied across papers but carries
+    no real signal.
+    """
+
+    name = "mock"
+
+    def __init__(self, model: str = "mock"):
+        self.model = model or "mock"
+
+    def generate(self, system: str, guidelines: str, user_prompt: str):
+        import hashlib, json as _json
+        h = int(hashlib.sha256(user_prompt.encode()).hexdigest(), 16)
+        overall = 3 + (h % 7)              # 3..9
+        decision = "Accept" if overall >= 6 else "Reject"
+        review = {
+            "summary": "Mock review for offline pipeline testing.",
+            "strengths": ["mock strength"],
+            "weaknesses": ["mock weakness"],
+            "questions": ["mock question"],
+            "limitations": "mock limitations",
+            "soundness": 1 + (h % 4),
+            "presentation": 1 + ((h // 7) % 4),
+            "contribution": 1 + ((h // 13) % 4),
+            "overall": overall,
+            "confidence": 1 + ((h // 17) % 5),
+            "decision": decision,
+        }
+        text = _json.dumps(review)
+        usage = {"input_tokens": len(user_prompt) // 4,
+                 "output_tokens": len(text) // 4,
+                 "cache_read_tokens": 0, "cache_write_tokens": 0}
+        return text, usage
+
+
 def get_provider(name: str, model: str | None = None, thinking: bool = True,
                  json_mode: bool | None = None,
                  base_url: str | None = None) -> Provider:
@@ -184,6 +224,8 @@ def get_provider(name: str, model: str | None = None, thinking: bool = True,
     base_url  -- override the endpoint (for any other OpenAI-compatible host)
     """
     name = name.lower()
+    if name == "mock":
+        return MockProvider(model=model or "mock")
     model = model or DEFAULT_MODELS.get(name)
     if model is None:
         raise ValueError(f"No default model for provider '{name}' — pass --model")
