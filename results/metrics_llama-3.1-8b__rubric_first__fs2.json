@@ -1,0 +1,68 @@
+{
+  "n_papers": 59,
+  "n_skipped": 1,
+  "mean_predicted_overall": 7.101694915254237,
+  "automated_reviewer": {
+    "n": 59,
+    "n_accept": 30,
+    "n_reject": 29,
+    "confusion": {
+      "tp": 30,
+      "fp": 29,
+      "fn": 0,
+      "tn": 0
+    },
+    "accuracy": 0.5084745762711864,
+    "balanced_accuracy": 0.5,
+    "balanced_accuracy_95ci": [
+      0.5,
+      0.5
+    ],
+    "f1": 0.6741573033707865,
+    "auc": 0.532183908045977,
+    "fpr": 1.0,
+    "fnr": 0.0
+  },
+  "baseline_always_reject": {
+    "n": 59,
+    "n_accept": 30,
+    "n_reject": 29,
+    "confusion": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 30,
+      "tn": 29
+    },
+    "accuracy": 0.4915254237288136,
+    "balanced_accuracy": 0.5,
+    "balanced_accuracy_95ci": [
+      0.5,
+      0.5
+    ],
+    "f1": 0.0,
+    "auc": 0.532183908045977,
+    "fpr": 0.0,
+    "fnr": 1.0
+  },
+  "baseline_random": {
+    "n": 59,
+    "n_accept": 30,
+    "n_reject": 29,
+    "confusion": {
+      "tp": 15,
+      "fp": 18,
+      "fn": 15,
+      "tn": 11
+    },
+    "accuracy": 0.4406779661016949,
+    "balanced_accuracy": 0.4396551724137931,
+    "balanced_accuracy_95ci": [
+      0.3159722222222222,
+      0.5668202764976958
+    ],
+    "f1": 0.47619047619047616,
+    "auc": 0.4494252873563218,
+    "fpr": 0.6206896551724138,
+    "fnr": 0.5
+  }
+}
